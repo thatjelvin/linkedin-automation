@@ -8,6 +8,21 @@
 
 A fully automated n8n workflow that generates and publishes engaging LinkedIn content about AI and Machine Learning—because staying consistent with educational content shouldn't require a full-time social media manager (or a trust fund for API keys).
 
+---
+
+## 🚀 Get Started in 30 Minutes!
+
+**Complete guides available:**
+- 📋 **[QUICKSTART.md](QUICKSTART.md)** - Get up and running in 30 minutes
+- ✅ **[CHECKLIST.md](CHECKLIST.md)** - Track your setup progress
+- 📘 **[SETUP.md](SETUP.md)** - Comprehensive setup guide
+- 📖 **[WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md)** - How to use and customize
+- 🐛 **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Common issues and solutions
+
+**Quick validation:** Run `npm run validate` to check your setup!
+
+---
+
 ## 📖 The Story Behind This
 
 As someone actively learning machine learning, I wanted to share my journey and help others break into the field. But let's be real—manually creating daily LinkedIn posts while juggling learning, coding, and, you know, *life* is exhausting.
