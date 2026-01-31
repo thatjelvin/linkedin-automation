@@ -1,0 +1,37 @@
+{
+  "name": "linkedin-ai-ml-automation",
+  "version": "1.0.0",
+  "description": "Automated LinkedIn content creation for AI/ML learning resources using n8n",
+  "main": "validate-setup.js",
+  "scripts": {
+    "validate": "node validate-setup.js",
+    "setup-check": "node validate-setup.js"
+  },
+  "keywords": [
+    "linkedin",
+    "automation",
+    "n8n",
+    "ai",
+    "machine-learning",
+    "content-automation",
+    "groq",
+    "llama"
+  ],
+  "author": "Jelvin Byamukama",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thatjelvin/linkedin-automation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thatjelvin/linkedin-automation/issues"
+  },
+  "homepage": "https://github.com/thatjelvin/linkedin-automation#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {},
+  "optionalDependencies": {
+    "dotenv": "^16.0.0"
+  }
+}

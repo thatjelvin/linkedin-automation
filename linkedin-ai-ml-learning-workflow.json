@@ -18,7 +18,9 @@
       "name": "Schedule Every 2 Days",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [0, 400]
+      "position": [0, 400],
+      "notes": "Triggers the workflow every 2 days at 10:00 AM. Customize frequency in node settings. See WORKFLOW_GUIDE.md for instructions.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -45,17 +47,21 @@
           "id": "google-sheets-credentials",
           "name": "Google Sheets OAuth2"
         }
-      }
+      },
+      "notes": "Reads previously posted topics from PostHistory tab. Requires: GOOGLE_SHEETS_DOC_ID and Google Sheets OAuth2 credential. See SETUP.md for configuration.",
+      "notesInFlow": true
     },
     {
       "parameters": {
-        "jsCode": "// Define comprehensive AI/ML learning topics with sub-topics\nconst topics = [\n  {\n    \"main\": \"Python for AI\",\n    \"description\": \"Learn Python programming fundamentals for AI and machine learning\",\n    \"resources\": [\"Python.org tutorials\", \"Kaggle Learn\", \"freeCodeCamp Python course\", \"Corey Schafer YouTube\"]\n  },\n  {\n    \"main\": \"Machine Learning Fundamentals\",\n    \"description\": \"Understanding core ML concepts, supervised and unsupervised learning\",\n    \"resources\": [\"Andrew Ng Coursera ML\", \"Fast.ai\", \"Google ML Crash Course\", \"StatQuest YouTube\"]\n  },\n  {\n    \"main\": \"Deep Learning Basics\",\n    \"description\": \"Neural networks, backpropagation, and deep learning architectures\",\n    \"resources\": [\"Deep Learning Specialization\", \"3Blue1Brown Neural Networks\", \"Dive into Deep Learning\", \"PyTorch tutorials\"]\n  },\n  {\n    \"main\": \"Natural Language Processing\",\n    \"description\": \"Text processing, transformers, and language models\",\n    \"resources\": [\"Hugging Face Course\", \"Stanford CS224N\", \"spaCy tutorials\", \"NLP with Python book\"]\n  },\n  {\n    \"main\": \"Computer Vision\",\n    \"description\": \"Image processing, CNNs, object detection, and image generation\",\n    \"resources\": [\"Stanford CS231n\", \"PyImageSearch\", \"OpenCV tutorials\", \"Keras Computer Vision\"]\n  },\n  {\n    \"main\": \"Data Science with Python\",\n    \"description\": \"NumPy, Pandas, data analysis, and visualization\",\n    \"resources\": [\"Kaggle Learn\", \"DataCamp free tier\", \"Python Data Science Handbook\", \"Pandas documentation\"]\n  },\n  {\n    \"main\": \"Mathematics for ML\",\n    \"description\": \"Linear algebra, calculus, probability, and statistics for machine learning\",\n    \"resources\": [\"3Blue1Brown Linear Algebra\", \"Khan Academy\", \"MIT OpenCourseWare\", \"Mathematics for ML book\"]\n  },\n  {\n    \"main\": \"TensorFlow and Keras\",\n    \"description\": \"Building and training models with TensorFlow framework\",\n    \"resources\": [\"TensorFlow tutorials\", \"Keras.io guides\", \"Google Codelabs\", \"TensorFlow YouTube channel\"]\n  },\n  {\n    \"main\": \"PyTorch\",\n    \"description\": \"Deep learning with PyTorch framework\",\n    \"resources\": [\"PyTorch tutorials\", \"Fast.ai with PyTorch\", \"PyTorch Lightning\", \"DeepLearning.ai PyTorch\"]\n  },\n  {\n    \"main\": \"Scikit-Learn\",\n    \"description\": \"Classical machine learning algorithms and implementation\",\n    \"resources\": [\"Scikit-learn docs\", \"Hands-On ML book\", \"DataCamp Scikit-learn\", \"Machine Learning Mastery\"]\n  },\n  {\n    \"main\": \"Reinforcement Learning\",\n    \"description\": \"Agent-based learning, Q-learning, and policy gradients\",\n    \"resources\": [\"Spinning Up in RL\", \"David Silver lectures\", \"Gymnasium tutorials\", \"Sutton & Barto book\"]\n  },\n  {\n    \"main\": \"MLOps and Deployment\",\n    \"description\": \"Model deployment, monitoring, and production ML systems\",\n    \"resources\": [\"MLflow tutorials\", \"TensorFlow Serving\", \"FastAPI documentation\", \"Google Cloud ML tutorials\"]\n  },\n  {\n    \"main\": \"Generative AI\",\n    \"description\": \"GANs, VAEs, diffusion models, and generative models\",\n    \"resources\": [\"GANs in Action book\", \"Stable Diffusion tutorials\", \"Hugging Face Diffusers\", \"OpenAI Cookbook\"]\n  },\n  {\n    \"main\": \"Large Language Models\",\n    \"description\": \"Understanding and fine-tuning LLMs like GPT, BERT, and more\",\n    \"resources\": [\"Hugging Face Transformers\", \"LangChain docs\", \"OpenAI API guides\", \"Anthropic Claude docs\"]\n  },\n  {\n    \"main\": \"Time Series Analysis\",\n    \"description\": \"Forecasting, ARIMA, LSTMs for sequential data\",\n    \"resources\": [\"Prophet by Meta\", \"statsmodels tutorials\", \"Time Series with Python\", \"Kaggle Time Series\"]\n  }\n];\n\n// Get posted topics from history\nconst postedTopics = ($input.first().json || []).map(row => row.Topic).filter(Boolean);\n\n// Find topics that haven't been posted yet\nconst availableTopics = topics.filter(t => !postedTopics.includes(t.main));\n\n// If all topics posted, reset and use all topics\nconst topicsToChoose = availableTopics.length > 0 ? availableTopics : topics;\n\n// Select a random topic\nconst selectedTopic = topicsToChoose[Math.floor(Math.random() * topicsToChoose.length)];\n\nreturn {\n  json: {\n    topic: selectedTopic.main,\n    description: selectedTopic.description,\n    resources: selectedTopic.resources,\n    allPostedTopics: postedTopics\n  }\n};"
+        "jsCode": "/*\n * Topic Selector with Smart Rotation\n * \n * Features:\n * - Maintains 15 comprehensive AI/ML topics\n * - Tracks posted topics to avoid repetition\n * - Automatically resets rotation when all topics are covered\n * - Includes curated free resources for each topic\n * \n * Customization:\n * - Add new topics to the topics array\n * - Update resources as needed\n * - See WORKFLOW_GUIDE.md for details\n */\n\n// Define comprehensive AI/ML learning topics with sub-topics\nconst topics = [\n  {\n    \"main\": \"Python for AI\",\n    \"description\": \"Learn Python programming fundamentals for AI and machine learning\",\n    \"resources\": [\"Python.org tutorials\", \"Kaggle Learn\", \"freeCodeCamp Python course\", \"Corey Schafer YouTube\"]\n  },\n  {\n    \"main\": \"Machine Learning Fundamentals\",\n    \"description\": \"Understanding core ML concepts, supervised and unsupervised learning\",\n    \"resources\": [\"Andrew Ng Coursera ML\", \"Fast.ai\", \"Google ML Crash Course\", \"StatQuest YouTube\"]\n  },\n  {\n    \"main\": \"Deep Learning Basics\",\n    \"description\": \"Neural networks, backpropagation, and deep learning architectures\",\n    \"resources\": [\"Deep Learning Specialization\", \"3Blue1Brown Neural Networks\", \"Dive into Deep Learning\", \"PyTorch tutorials\"]\n  },\n  {\n    \"main\": \"Natural Language Processing\",\n    \"description\": \"Text processing, transformers, and language models\",\n    \"resources\": [\"Hugging Face Course\", \"Stanford CS224N\", \"spaCy tutorials\", \"NLP with Python book\"]\n  },\n  {\n    \"main\": \"Computer Vision\",\n    \"description\": \"Image processing, CNNs, object detection, and image generation\",\n    \"resources\": [\"Stanford CS231n\", \"PyImageSearch\", \"OpenCV tutorials\", \"Keras Computer Vision\"]\n  },\n  {\n    \"main\": \"Data Science with Python\",\n    \"description\": \"NumPy, Pandas, data analysis, and visualization\",\n    \"resources\": [\"Kaggle Learn\", \"DataCamp free tier\", \"Python Data Science Handbook\", \"Pandas documentation\"]\n  },\n  {\n    \"main\": \"Mathematics for ML\",\n    \"description\": \"Linear algebra, calculus, probability, and statistics for machine learning\",\n    \"resources\": [\"3Blue1Brown Linear Algebra\", \"Khan Academy\", \"MIT OpenCourseWare\", \"Mathematics for ML book\"]\n  },\n  {\n    \"main\": \"TensorFlow and Keras\",\n    \"description\": \"Building and training models with TensorFlow framework\",\n    \"resources\": [\"TensorFlow tutorials\", \"Keras.io guides\", \"Google Codelabs\", \"TensorFlow YouTube channel\"]\n  },\n  {\n    \"main\": \"PyTorch\",\n    \"description\": \"Deep learning with PyTorch framework\",\n    \"resources\": [\"PyTorch tutorials\", \"Fast.ai with PyTorch\", \"PyTorch Lightning\", \"DeepLearning.ai PyTorch\"]\n  },\n  {\n    \"main\": \"Scikit-Learn\",\n    \"description\": \"Classical machine learning algorithms and implementation\",\n    \"resources\": [\"Scikit-learn docs\", \"Hands-On ML book\", \"DataCamp Scikit-learn\", \"Machine Learning Mastery\"]\n  },\n  {\n    \"main\": \"Reinforcement Learning\",\n    \"description\": \"Agent-based learning, Q-learning, and policy gradients\",\n    \"resources\": [\"Spinning Up in RL\", \"David Silver lectures\", \"Gymnasium tutorials\", \"Sutton & Barto book\"]\n  },\n  {\n    \"main\": \"MLOps and Deployment\",\n    \"description\": \"Model deployment, monitoring, and production ML systems\",\n    \"resources\": [\"MLflow tutorials\", \"TensorFlow Serving\", \"FastAPI documentation\", \"Google Cloud ML tutorials\"]\n  },\n  {\n    \"main\": \"Generative AI\",\n    \"description\": \"GANs, VAEs, diffusion models, and generative models\",\n    \"resources\": [\"GANs in Action book\", \"Stable Diffusion tutorials\", \"Hugging Face Diffusers\", \"OpenAI Cookbook\"]\n  },\n  {\n    \"main\": \"Large Language Models\",\n    \"description\": \"Understanding and fine-tuning LLMs like GPT, BERT, and more\",\n    \"resources\": [\"Hugging Face Transformers\", \"LangChain docs\", \"OpenAI API guides\", \"Anthropic Claude docs\"]\n  },\n  {\n    \"main\": \"Time Series Analysis\",\n    \"description\": \"Forecasting, ARIMA, LSTMs for sequential data\",\n    \"resources\": [\"Prophet by Meta\", \"statsmodels tutorials\", \"Time Series with Python\", \"Kaggle Time Series\"]\n  }\n];\n\n// Get posted topics from history (handles empty sheet gracefully)\nconst postedTopics = ($input.first().json || []).map(row => row.Topic).filter(Boolean);\n\n// Find topics that haven't been posted yet\nconst availableTopics = topics.filter(t => !postedTopics.includes(t.main));\n\n// If all topics posted, reset rotation and use all topics\nconst topicsToChoose = availableTopics.length > 0 ? availableTopics : topics;\n\n// Select a random topic from available topics\nconst selectedTopic = topicsToChoose[Math.floor(Math.random() * topicsToChoose.length)];\n\n// Return selected topic with all metadata\nreturn {\n  json: {\n    topic: selectedTopic.main,\n    description: selectedTopic.description,\n    resources: selectedTopic.resources,\n    allPostedTopics: postedTopics,\n    rotationStatus: availableTopics.length > 0 ? `${topics.length - availableTopics.length}/${topics.length} topics posted` : 'Rotation reset - all topics posted'\n  }\n};"
       },
       "id": "topic-selector",
       "name": "Topic Selector with Rotation",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [440, 400]
+      "position": [440, 400],
+      "notes": "Selects next unposted topic from 15 AI/ML topics. Tracks rotation to ensure variety. Add custom topics here - see WORKFLOW_GUIDE.md.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -79,7 +85,9 @@
       "name": "Search Topic Trends",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [660, 400]
+      "position": [660, 400],
+      "notes": "Fetches latest AI/ML trends using Tavily API (free tier: 1000 searches/month). Requires: TAVILY_API_KEY. Get free key at tavily.com.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -117,7 +125,9 @@
       "name": "Preserve Context Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [880, 400]
+      "position": [880, 400],
+      "notes": "Combines topic data and trends for AI content generation. Ensures all context is available in one object.",
+      "notesInFlow": false
     },
     {
       "parameters": {
@@ -131,7 +141,9 @@
       "name": "Groq AI Content Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
-      "position": [1100, 400]
+      "position": [1100, 400],
+      "notes": "Generates LinkedIn post content using AI. Customize prompt to change post style - see WORKFLOW_GUIDE.md. Uses Groq's Llama 3.3 70B model (free tier: 14,400 req/day).",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -151,7 +163,9 @@
           "id": "groq-credentials",
           "name": "Groq API"
         }
-      }
+      },
+      "notes": "Groq LLM configuration. Requires: Groq API credential with GROQ_API_KEY. Get free key at console.groq.com. Temperature 0.7 balances creativity and consistency.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -177,7 +191,9 @@
       "name": "Set Post Content",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [1320, 400]
+      "position": [1320, 400],
+      "notes": "Extracts generated post text and preserves topic for image search and logging.",
+      "notesInFlow": false
     },
     {
       "parameters": {
@@ -198,17 +214,21 @@
       "name": "Search Unsplash Images",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1540, 400]
+      "position": [1540, 400],
+      "notes": "Searches for relevant images on Unsplash (free tier: 50 req/hour). Requires: UNSPLASH_ACCESS_KEY. Get free key at unsplash.com/developers.",
+      "notesInFlow": true
     },
     {
       "parameters": {
-        "jsCode": "// Get the search results\nconst results = $input.first().json.results || [];\n\n// If no results, use a fallback\nif (results.length === 0) {\n  return {\n    json: {\n      imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',\n      imageDescription: 'AI and machine learning concept',\n      photographer: 'Unsplash',\n      postText: $('Set Post Content').item.json.postText,\n      topic: $('Set Post Content').item.json.topic\n    }\n  };\n}\n\n// Select a high-quality image (first result is usually best)\nconst selectedImage = results[0];\n\nreturn {\n  json: {\n    imageUrl: selectedImage.urls.regular,\n    imageDescription: selectedImage.alt_description || selectedImage.description || 'AI concept',\n    photographer: selectedImage.user.name,\n    photographerLink: selectedImage.user.links.html,\n    postText: $('Set Post Content').item.json.postText,\n    topic: $('Set Post Content').item.json.topic\n  }\n};"
+        "jsCode": "/*\n * Image Selection with Fallback\n * \n * Features:\n * - Selects high-quality image from Unsplash results\n * - Fallback to default image if search fails\n * - Includes photographer attribution (required by Unsplash)\n * - Customizable selection logic\n * \n * See WORKFLOW_GUIDE.md for customization options\n */\n\n// Get the search results\nconst results = $input.first().json.results || [];\n\n// If no results, use a fallback image\nif (results.length === 0) {\n  return {\n    json: {\n      imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',\n      imageDescription: 'AI and machine learning concept',\n      photographer: 'Unsplash',\n      photographerLink: 'https://unsplash.com',\n      postText: $('Set Post Content').item.json.postText,\n      topic: $('Set Post Content').item.json.topic\n    }\n  };\n}\n\n// Select a high-quality image (first result is usually best)\nconst selectedImage = results[0];\n\n// Return image data with attribution\nreturn {\n  json: {\n    imageUrl: selectedImage.urls.regular,\n    imageDescription: selectedImage.alt_description || selectedImage.description || 'AI concept',\n    photographer: selectedImage.user.name,\n    photographerLink: selectedImage.user.links.html,\n    postText: $('Set Post Content').item.json.postText,\n    topic: $('Set Post Content').item.json.topic\n  }\n};"
       },
       "id": "process-image-selection",
       "name": "Process Image Selection",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1760, 400]
+      "position": [1760, 400],
+      "notes": "Selects best image from search results with fallback. Includes photographer attribution per Unsplash guidelines. Customize selection logic here.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -226,7 +246,9 @@
       "name": "Download Image",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1980, 400]
+      "position": [1980, 400],
+      "notes": "Downloads selected image as binary data for LinkedIn upload. Image is stored in memory only (not saved to disk).",
+      "notesInFlow": false
     },
     {
       "parameters": {
@@ -270,7 +292,9 @@
       "name": "Prepare Final Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [2200, 400]
+      "position": [2200, 400],
+      "notes": "Combines all data (post text, topic, image, timestamp, credits) for posting and logging.",
+      "notesInFlow": false
     },
     {
       "parameters": {
@@ -289,7 +313,9 @@
           "id": "linkedin-oauth2-credentials",
           "name": "LinkedIn OAuth2"
         }
-      }
+      },
+      "notes": "Posts content to LinkedIn with image. Requires: LINKEDIN_PERSON_URN and LinkedIn OAuth2 credential. See SETUP.md for configuration.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -374,7 +400,9 @@
           "id": "google-sheets-credentials",
           "name": "Google Sheets OAuth2"
         }
-      }
+      },
+      "notes": "Logs successful post to PostHistory tab. Tracks: timestamp, topic, post text, image credit, status. Required for topic rotation.",
+      "notesInFlow": true
     },
     {
       "parameters": {},
@@ -382,7 +410,9 @@
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
-      "position": [0, 800]
+      "position": [0, 800],
+      "notes": "Catches any errors from main workflow for logging and notification. Ensures failures don't go unnoticed.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -420,13 +450,15 @@
       "name": "Format Error Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [220, 800]
+      "position": [220, 800],
+      "notes": "Formats error information for logging and email notification.",
+      "notesInFlow": false
     },
     {
       "parameters": {
         "sendTo": "={{ $env.ALERT_EMAIL }}",
         "subject": "=🚨 n8n Error: {{ $json.workflowName }}",
-        "message": "=⚠️ Workflow Error Alert\n\n📋 Workflow: {{ $json.workflowName }}\n❌ Failed Node: {{ $json.failedNode }}\n💬 Error Message: {{ $json.errorMessage }}\n🕐 Timestamp: {{ $json.timestamp }}\n\n🔧 Please investigate and resolve the issue.\n\nThis is an automated alert from your n8n workflow.",
+        "message": "=⚠️ Workflow Error Alert\n\n📋 Workflow: {{ $json.workflowName }}\n❌ Failed Node: {{ $json.failedNode }}\n💬 Error Message: {{ $json.errorMessage }}\n🕐 Timestamp: {{ $json.timestamp }}\n\n🔧 Please investigate and resolve the issue.\n\n📚 Troubleshooting Guide: https://github.com/thatjelvin/linkedin-automation/blob/main/TROUBLESHOOTING.md\n\nThis is an automated alert from your n8n workflow.",
         "options": {}
       },
       "id": "send-error-email",
@@ -439,7 +471,9 @@
           "id": "smtp-credentials",
           "name": "SMTP"
         }
-      }
+      },
+      "notes": "Sends email alert on workflow failure (OPTIONAL). Requires: ALERT_EMAIL and SMTP credentials. See SETUP.md for email configuration.",
+      "notesInFlow": true
     },
     {
       "parameters": {
@@ -514,7 +548,9 @@
           "id": "google-sheets-credentials",
           "name": "Google Sheets OAuth2"
         }
-      }
+      },
+      "notes": "Logs errors to ErrorLog tab for tracking and analysis. Helps identify recurring issues. See TROUBLESHOOTING.md for common errors.",
+      "notesInFlow": true
     }
   ],
   "connections": {
@@ -694,8 +730,33 @@
     "executionOrder": "v1"
   },
   "staticData": null,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2026-01-31T08:23:00.000Z",
+      "updatedAt": "2026-01-31T08:23:00.000Z",
+      "id": "automation",
+      "name": "automation"
+    },
+    {
+      "createdAt": "2026-01-31T08:23:00.000Z",
+      "updatedAt": "2026-01-31T08:23:00.000Z",
+      "id": "linkedin",
+      "name": "linkedin"
+    },
+    {
+      "createdAt": "2026-01-31T08:23:00.000Z",
+      "updatedAt": "2026-01-31T08:23:00.000Z",
+      "id": "ai-ml",
+      "name": "ai-ml"
+    },
+    {
+      "createdAt": "2026-01-31T08:23:00.000Z",
+      "updatedAt": "2026-01-31T08:23:00.000Z",
+      "id": "content-automation",
+      "name": "content-automation"
+    }
+  ],
   "triggerCount": 1,
-  "updatedAt": "2026-01-31T07:29:00.000Z",
-  "versionId": "1"
+  "updatedAt": "2026-01-31T08:23:00.000Z",
+  "versionId": "2.0"
 }
