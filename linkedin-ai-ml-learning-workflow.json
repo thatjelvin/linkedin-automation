@@ -1,0 +1,701 @@
+{
+  "name": "LinkedIn AI/ML Learning Content Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 2,
+              "triggerAtHour": 10,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger-every-2-days",
+      "name": "Schedule Every 2 Days",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 400]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $env.GOOGLE_SHEETS_DOC_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $env.GOOGLE_SHEETS_SHEET_NAME || 'PostHistory' }}",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "read-post-history",
+      "name": "Read Post History",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [220, 400],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-credentials",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Define comprehensive AI/ML learning topics with sub-topics\nconst topics = [\n  {\n    \"main\": \"Python for AI\",\n    \"description\": \"Learn Python programming fundamentals for AI and machine learning\",\n    \"resources\": [\"Python.org tutorials\", \"Kaggle Learn\", \"freeCodeCamp Python course\", \"Corey Schafer YouTube\"]\n  },\n  {\n    \"main\": \"Machine Learning Fundamentals\",\n    \"description\": \"Understanding core ML concepts, supervised and unsupervised learning\",\n    \"resources\": [\"Andrew Ng Coursera ML\", \"Fast.ai\", \"Google ML Crash Course\", \"StatQuest YouTube\"]\n  },\n  {\n    \"main\": \"Deep Learning Basics\",\n    \"description\": \"Neural networks, backpropagation, and deep learning architectures\",\n    \"resources\": [\"Deep Learning Specialization\", \"3Blue1Brown Neural Networks\", \"Dive into Deep Learning\", \"PyTorch tutorials\"]\n  },\n  {\n    \"main\": \"Natural Language Processing\",\n    \"description\": \"Text processing, transformers, and language models\",\n    \"resources\": [\"Hugging Face Course\", \"Stanford CS224N\", \"spaCy tutorials\", \"NLP with Python book\"]\n  },\n  {\n    \"main\": \"Computer Vision\",\n    \"description\": \"Image processing, CNNs, object detection, and image generation\",\n    \"resources\": [\"Stanford CS231n\", \"PyImageSearch\", \"OpenCV tutorials\", \"Keras Computer Vision\"]\n  },\n  {\n    \"main\": \"Data Science with Python\",\n    \"description\": \"NumPy, Pandas, data analysis, and visualization\",\n    \"resources\": [\"Kaggle Learn\", \"DataCamp free tier\", \"Python Data Science Handbook\", \"Pandas documentation\"]\n  },\n  {\n    \"main\": \"Mathematics for ML\",\n    \"description\": \"Linear algebra, calculus, probability, and statistics for machine learning\",\n    \"resources\": [\"3Blue1Brown Linear Algebra\", \"Khan Academy\", \"MIT OpenCourseWare\", \"Mathematics for ML book\"]\n  },\n  {\n    \"main\": \"TensorFlow and Keras\",\n    \"description\": \"Building and training models with TensorFlow framework\",\n    \"resources\": [\"TensorFlow tutorials\", \"Keras.io guides\", \"Google Codelabs\", \"TensorFlow YouTube channel\"]\n  },\n  {\n    \"main\": \"PyTorch\",\n    \"description\": \"Deep learning with PyTorch framework\",\n    \"resources\": [\"PyTorch tutorials\", \"Fast.ai with PyTorch\", \"PyTorch Lightning\", \"DeepLearning.ai PyTorch\"]\n  },\n  {\n    \"main\": \"Scikit-Learn\",\n    \"description\": \"Classical machine learning algorithms and implementation\",\n    \"resources\": [\"Scikit-learn docs\", \"Hands-On ML book\", \"DataCamp Scikit-learn\", \"Machine Learning Mastery\"]\n  },\n  {\n    \"main\": \"Reinforcement Learning\",\n    \"description\": \"Agent-based learning, Q-learning, and policy gradients\",\n    \"resources\": [\"Spinning Up in RL\", \"David Silver lectures\", \"Gymnasium tutorials\", \"Sutton & Barto book\"]\n  },\n  {\n    \"main\": \"MLOps and Deployment\",\n    \"description\": \"Model deployment, monitoring, and production ML systems\",\n    \"resources\": [\"MLflow tutorials\", \"TensorFlow Serving\", \"FastAPI documentation\", \"Google Cloud ML tutorials\"]\n  },\n  {\n    \"main\": \"Generative AI\",\n    \"description\": \"GANs, VAEs, diffusion models, and generative models\",\n    \"resources\": [\"GANs in Action book\", \"Stable Diffusion tutorials\", \"Hugging Face Diffusers\", \"OpenAI Cookbook\"]\n  },\n  {\n    \"main\": \"Large Language Models\",\n    \"description\": \"Understanding and fine-tuning LLMs like GPT, BERT, and more\",\n    \"resources\": [\"Hugging Face Transformers\", \"LangChain docs\", \"OpenAI API guides\", \"Anthropic Claude docs\"]\n  },\n  {\n    \"main\": \"Time Series Analysis\",\n    \"description\": \"Forecasting, ARIMA, LSTMs for sequential data\",\n    \"resources\": [\"Prophet by Meta\", \"statsmodels tutorials\", \"Time Series with Python\", \"Kaggle Time Series\"]\n  }\n];\n\n// Get posted topics from history\nconst postedTopics = ($input.first().json || []).map(row => row.Topic).filter(Boolean);\n\n// Find topics that haven't been posted yet\nconst availableTopics = topics.filter(t => !postedTopics.includes(t.main));\n\n// If all topics posted, reset and use all topics\nconst topicsToChoose = availableTopics.length > 0 ? availableTopics : topics;\n\n// Select a random topic\nconst selectedTopic = topicsToChoose[Math.floor(Math.random() * topicsToChoose.length)];\n\nreturn {\n  json: {\n    topic: selectedTopic.main,\n    description: selectedTopic.description,\n    resources: selectedTopic.resources,\n    allPostedTopics: postedTopics\n  }\n};"
+      },
+      "id": "topic-selector",
+      "name": "Topic Selector with Rotation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"api_key\": \"{{ $env.TAVILY_API_KEY }}\",\n  \"query\": \"{{ $json.topic }} latest developments trends 2024 2025\",\n  \"max_results\": 3,\n  \"search_depth\": \"advanced\"\n}",
+        "options": {}
+      },
+      "id": "search-topic-trends",
+      "name": "Search Topic Trends",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "preserve-topic-data",
+              "name": "topic",
+              "value": "={{ $('Topic Selector with Rotation').item.json.topic }}",
+              "type": "string"
+            },
+            {
+              "id": "preserve-description",
+              "name": "description",
+              "value": "={{ $('Topic Selector with Rotation').item.json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "preserve-resources",
+              "name": "resources",
+              "value": "={{ $('Topic Selector with Rotation').item.json.resources }}",
+              "type": "object"
+            },
+            {
+              "id": "preserve-trends",
+              "name": "trends",
+              "value": "={{ $json.results }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "preserve-context",
+      "name": "Preserve Context Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 400]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic: {{ $json.topic }}\nDescription: {{ $json.description }}\n\nFree Resources:\n{{ $json.resources.join('\\n') }}\n\nLatest Trends:\n{{ $json.trends.map(t => `- ${t.title}: ${t.content}`).join('\\n') }}\n\nCreate an engaging LinkedIn post that:\n1. Starts with a hook about why this topic matters in 2025\n2. Explains the best way to learn {{ $json.topic }} for beginners\n3. Lists 3-4 top FREE resources with brief descriptions\n4. Mentions current trends or applications\n5. Ends with motivation and call-to-action\n6. Includes 3-5 relevant hashtags\n7. Uses 2-3 emojis maximum for engagement\n\nTone: Educational, encouraging, professional yet accessible",
+        "options": {
+          "systemMessage": "You are an expert AI/ML educator and LinkedIn content creator. You specialize in making complex AI and machine learning concepts accessible to beginners. Your posts are informative, encouraging, and always include practical free resources. You focus on actionable learning paths and current industry trends."
+        }
+      },
+      "id": "groq-content-agent",
+      "name": "Groq AI Content Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [1100, 400]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0.7,
+          "maxTokens": 1000
+        }
+      },
+      "id": "groq-chat-model",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [1020, 600],
+      "credentials": {
+        "groqApi": {
+          "id": "groq-credentials",
+          "name": "Groq API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-post-content",
+              "name": "postText",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "keep-topic",
+              "name": "topic",
+              "value": "={{ $('Preserve Context Data').item.json.topic }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-post-content",
+      "name": "Set Post Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1320, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.unsplash.com/search/photos?query={{ $json.topic.replace(/ /g, '+') }}+artificial+intelligence+technology&per_page=5&orientation=landscape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Client-ID {{ $env.UNSPLASH_ACCESS_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "search-unsplash-images",
+      "name": "Search Unsplash Images",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the search results\nconst results = $input.first().json.results || [];\n\n// If no results, use a fallback\nif (results.length === 0) {\n  return {\n    json: {\n      imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995',\n      imageDescription: 'AI and machine learning concept',\n      photographer: 'Unsplash',\n      postText: $('Set Post Content').item.json.postText,\n      topic: $('Set Post Content').item.json.topic\n    }\n  };\n}\n\n// Select a high-quality image (first result is usually best)\nconst selectedImage = results[0];\n\nreturn {\n  json: {\n    imageUrl: selectedImage.urls.regular,\n    imageDescription: selectedImage.alt_description || selectedImage.description || 'AI concept',\n    photographer: selectedImage.user.name,\n    photographerLink: selectedImage.user.links.html,\n    postText: $('Set Post Content').item.json.postText,\n    topic: $('Set Post Content').item.json.topic\n  }\n};"
+      },
+      "id": "process-image-selection",
+      "name": "Process Image Selection",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, 400]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.imageUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download-image",
+      "name": "Download Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1980, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "final-post-text",
+              "name": "postText",
+              "value": "={{ $('Process Image Selection').item.json.postText }}",
+              "type": "string"
+            },
+            {
+              "id": "final-topic",
+              "name": "topic",
+              "value": "={{ $('Process Image Selection').item.json.topic }}",
+              "type": "string"
+            },
+            {
+              "id": "final-image",
+              "name": "imageData",
+              "value": "={{ $json }}",
+              "type": "object"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "photographer-credit",
+              "name": "imageCredit",
+              "value": "={{ $('Process Image Selection').item.json.photographer }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "prepare-final-data",
+      "name": "Prepare Final Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2200, 400]
+    },
+    {
+      "parameters": {
+        "person": "={{ $env.LINKEDIN_PERSON_URN }}",
+        "text": "={{ $json.postText }}",
+        "mediaCategory": "IMAGE",
+        "binaryPropertyName": "data"
+      },
+      "id": "linkedin-post",
+      "name": "Post to LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [2420, 400],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "linkedin-oauth2-credentials",
+          "name": "LinkedIn OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $env.GOOGLE_SHEETS_DOC_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $env.GOOGLE_SHEETS_SHEET_NAME || 'PostHistory' }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('Prepare Final Data').item.json.timestamp }}",
+            "Topic": "={{ $('Prepare Final Data').item.json.topic }}",
+            "PostText": "={{ $('Prepare Final Data').item.json.postText }}",
+            "ImageCredit": "={{ $('Prepare Final Data').item.json.imageCredit }}",
+            "Status": "Published"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "PostText",
+              "displayName": "PostText",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "ImageCredit",
+              "displayName": "ImageCredit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-to-sheets",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2640, 400],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-credentials",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [0, 800]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "error-node-name",
+              "name": "failedNode",
+              "value": "={{ $json.execution.error.node.name }}",
+              "type": "string"
+            },
+            {
+              "id": "error-message-text",
+              "name": "errorMessage",
+              "value": "={{ $json.execution.error.message }}",
+              "type": "string"
+            },
+            {
+              "id": "error-timestamp-value",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "workflow-name",
+              "name": "workflowName",
+              "value": "LinkedIn AI/ML Learning Content Automation",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "format-error-data",
+      "name": "Format Error Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 800]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.ALERT_EMAIL }}",
+        "subject": "=🚨 n8n Error: {{ $json.workflowName }}",
+        "message": "=⚠️ Workflow Error Alert\n\n📋 Workflow: {{ $json.workflowName }}\n❌ Failed Node: {{ $json.failedNode }}\n💬 Error Message: {{ $json.errorMessage }}\n🕐 Timestamp: {{ $json.timestamp }}\n\n🔧 Please investigate and resolve the issue.\n\nThis is an automated alert from your n8n workflow.",
+        "options": {}
+      },
+      "id": "send-error-email",
+      "name": "Send Error Alert Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [440, 800],
+      "credentials": {
+        "smtp": {
+          "id": "smtp-credentials",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $env.GOOGLE_SHEETS_DOC_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ErrorLog",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.timestamp }}",
+            "Workflow": "={{ $json.workflowName }}",
+            "FailedNode": "={{ $json.failedNode }}",
+            "ErrorMessage": "={{ $json.errorMessage }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "Workflow",
+              "displayName": "Workflow",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "FailedNode",
+              "displayName": "FailedNode",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "ErrorMessage",
+              "displayName": "ErrorMessage",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-error-to-sheets",
+      "name": "Log Error to Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [660, 800],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-credentials",
+          "name": "Google Sheets OAuth2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Every 2 Days": {
+      "main": [
+        [
+          {
+            "node": "Read Post History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Post History": {
+      "main": [
+        [
+          {
+            "node": "Topic Selector with Rotation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Selector with Rotation": {
+      "main": [
+        [
+          {
+            "node": "Search Topic Trends",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Topic Trends": {
+      "main": [
+        [
+          {
+            "node": "Preserve Context Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preserve Context Data": {
+      "main": [
+        [
+          {
+            "node": "Groq AI Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Groq AI Content Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq AI Content Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Post Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Post Content": {
+      "main": [
+        [
+          {
+            "node": "Search Unsplash Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Unsplash Images": {
+      "main": [
+        [
+          {
+            "node": "Process Image Selection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Image Selection": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Prepare Final Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Final Data": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Error Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error Data": {
+      "main": [
+        [
+          {
+            "node": "Send Error Alert Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Error to Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-31T07:29:00.000Z",
+  "versionId": "1"
+}
