@@ -28,7 +28,7 @@ This document explains how the LinkedIn AI/ML automation workflow handles differ
             │
             ▼
   ┌──────────────────────┐
-  │  Search Topic Trends │ (Tavily API)
+  │  Search Topic Trends │ (Tavily API - Dynamic Year)
   └─────────┬────────────┘
             │
             ▼
@@ -227,3 +227,4 @@ ALERT_EMAIL=<your-email>
 - [n8n-MCP for AI-Assisted Development](https://github.com/czlonkowski/n8n-mcp)
 - [Google Sheets API](https://developers.google.com/sheets/api)
 - [LinkedIn API](https://docs.microsoft.com/en-us/linkedin/)
+- [Tavily Search Documentation](TAVILY_SEARCH.md) - How Tavily searches for topics with dynamic year handling

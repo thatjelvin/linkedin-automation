@@ -73,7 +73,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"api_key\": \"{{ $env.TAVILY_API_KEY }}\",\n  \"query\": \"{{ $json.topic }} latest developments trends 2024 2025\",\n  \"max_results\": 3,\n  \"search_depth\": \"advanced\"\n}",
+        "jsonBody": "={\n  \"api_key\": \"{{ $env.TAVILY_API_KEY }}\",\n  \"query\": \"{{ $json.topic }} latest developments trends {{ $now.year }} {{ $now.year + 1 }}\",\n  \"max_results\": 3,\n  \"search_depth\": \"advanced\",\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
         "options": {}
       },
       "id": "search-topic-trends",
