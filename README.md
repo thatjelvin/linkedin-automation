@@ -223,7 +223,7 @@ This ensures the workflow never fails due to missing historical data.
 
 - [n8n Documentation](https://docs.n8n.io/)
 - [n8n-MCP for AI-Assisted Workflow Building](https://github.com/czlonkowski/n8n-mcp)
-- [LinkedIn API Documentation](https://docs.microsoft.com/en-us/linkedin/)
+- [LinkedIn API Documentation](https://learn.microsoft.com/en-us/linkedin/)
 - [Groq API Documentation](https://groq.com/)
 
 ---
