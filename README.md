@@ -31,11 +31,13 @@ So I built this workflow to:
 
 ### 🌐 Real-Time Trend Integration
 - Fetches **latest developments and trends** using Tavily API
-- Keeps content **fresh and relevant** with 2024/2025 industry insights
+- **Dynamic year handling** - automatically searches current year (e.g., 2026) and next year
+- Keeps content **fresh and relevant** with current industry insights
 - Connects learners to what's actually happening in AI *right now*
 
 ### 🤖 AI-Powered Content Generation
 - **Groq's Llama 3.3 70B model** (free tier FTW!) generates engaging, educational posts
+- **Dynamic year references** - posts always mention current year and trends
 - Professionally crafted prompts for **consistent quality**
 - Educational tone that's **accessible yet professional**
 
@@ -225,6 +227,8 @@ This ensures the workflow never fails due to missing historical data.
 - [n8n-MCP for AI-Assisted Workflow Building](https://github.com/czlonkowski/n8n-mcp)
 - [LinkedIn API Documentation](https://learn.microsoft.com/en-us/linkedin/)
 - [Groq API Documentation](https://groq.com/)
+- [Complete Node Functionality Analysis](NODE_ANALYSIS.md) - Detailed analysis of all 18 workflow nodes
+- [Tavily Search Documentation](TAVILY_SEARCH.md) - How Tavily searches for topics with dynamic year handling
 
 ---
 
