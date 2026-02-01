@@ -264,55 +264,6 @@
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "final-post-text",
-              "name": "postText",
-              "value": "={{ $('Process Image Selection').item.json.postText }}",
-              "type": "string"
-            },
-            {
-              "id": "final-topic",
-              "name": "topic",
-              "value": "={{ $('Process Image Selection').item.json.topic }}",
-              "type": "string"
-            },
-            {
-              "id": "final-image",
-              "name": "imageData",
-              "value": "={{ $json }}",
-              "type": "object"
-            },
-            {
-              "id": "timestamp",
-              "name": "timestamp",
-              "value": "={{ $now.toISO() }}",
-              "type": "string"
-            },
-            {
-              "id": "photographer-credit",
-              "name": "imageCredit",
-              "value": "={{ $('Process Image Selection').item.json.photographer }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {
-          "keepOnlySet": false
-        }
-      },
-      "id": "prepare-final-data",
-      "name": "Prepare Final Data",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        2200,
-        400
-      ]
-    },
-    {
-      "parameters": {
         "person": "={{ $env.LINKEDIN_PERSON_URN }}",
         "text": "={{ $json.postText }}",
         "mediaCategory": "IMAGE",
@@ -572,6 +523,21 @@
           "name": "Google Sheets OAuth2"
         }
       }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "merge-image-text",
+      "name": "Merge Image and Text",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2200,
+        300
+      ]
     }
   ],
   "connections": {
@@ -659,6 +625,11 @@
             "node": "Search Unsplash Images",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Merge Image and Text",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -689,20 +660,9 @@
       "main": [
         [
           {
-            "node": "Prepare Final Data",
+            "node": "Merge Image and Text",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Final Data": {
-      "main": [
-        [
-          {
-            "node": "Post to LinkedIn",
-            "type": "main",
-            "index": 0
+            "index": 1
           }
         ]
       ]
@@ -739,6 +699,17 @@
           },
           {
             "node": "Log Error to Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Image and Text": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
             "type": "main",
             "index": 0
           }

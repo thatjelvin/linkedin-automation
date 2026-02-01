@@ -807,3 +807,67 @@ Post to LinkedIn (mediaCategory: IMAGE, binaryPropertyName: data)
 
 See [IMAGE_POSTING_FIX.md](IMAGE_POSTING_FIX.md) for detailed analysis.
 
+
+---
+
+## Update: Merge Node Implementation (User Requested)
+
+### Change Made
+Replaced the Set node approach with n8n's native **Merge node**, as specifically requested by the user.
+
+### What Changed
+
+**Removed:**
+- Prepare Final Data node (Set node with keepOnlySet: false)
+
+**Added:**
+- Merge Image and Text node (n8n-nodes-base.merge)
+
+### New Data Flow
+
+```
+Set Post Content ──┬→ Search Unsplash → Process → Download ─┐
+                   │                                         │
+                   └─────────────────────────────────────────┤
+                                                             ↓
+                                                       Merge Node
+                                                             ↓
+                                                     Post to LinkedIn
+```
+
+### How It Works
+
+**Merge Node Configuration:**
+- Type: `n8n-nodes-base.merge`
+- Mode: `combine`
+- Combination Mode: `mergeByPosition`
+
+**Input 1 (from Set Post Content):**
+- postText: The generated LinkedIn post
+- topic: The AI/ML topic
+
+**Input 2 (from Download Image):**
+- data: Binary image data
+- json: Image metadata
+
+**Output (Merged):**
+- All properties from both inputs combined
+- Post to LinkedIn can access both postText and data binary
+
+### Why This Approach?
+
+1. **User requested it** - Specifically asked for Merge node
+2. **n8n native pattern** - Standard way to combine streams
+3. **Clear workflow structure** - Visual separation of text and image pipelines
+4. **Explicit combination** - Merge point is obvious in workflow
+
+### Verification
+
+✓ Merge node exists in workflow  
+✓ Set Post Content connects to both Search Unsplash and Merge  
+✓ Download Image connects to Merge  
+✓ Merge connects to Post to LinkedIn  
+✓ Prepare Final Data removed  
+
+See [MERGE_NODE_IMPLEMENTATION.md](MERGE_NODE_IMPLEMENTATION.md) for complete details.
+

@@ -261,3 +261,10 @@ This project is licensed under the MIT License.
 ---
 
 **Made with ❤️ by [Jelvin Byamukama](https://www.linkedin.com/in/jelvin-byamukama) | Helping aspiring ML engineers learn for free**
+
+### 🔄 Data Stream Merging
+- **n8n Merge node** combines text and image streams
+- Proper separation of text generation and image download pipelines
+- Standard n8n pattern for combining multiple data sources
+- Clean workflow architecture with explicit merge point
+
