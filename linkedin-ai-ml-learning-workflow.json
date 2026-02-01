@@ -18,7 +18,10 @@
       "name": "Schedule Every 2 Days",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [0, 400]
+      "position": [
+        0,
+        400
+      ]
     },
     {
       "parameters": {
@@ -39,7 +42,10 @@
       "name": "Read Post History",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [220, 400],
+      "position": [
+        220,
+        400
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google-sheets-credentials",
@@ -56,7 +62,10 @@
       "name": "Topic Selector with Rotation",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [440, 400]
+      "position": [
+        440,
+        400
+      ]
     },
     {
       "parameters": {
@@ -80,7 +89,10 @@
       "name": "Search Topic Trends",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [660, 400]
+      "position": [
+        660,
+        400
+      ]
     },
     {
       "parameters": {
@@ -118,7 +130,10 @@
       "name": "Preserve Context Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [880, 400]
+      "position": [
+        880,
+        400
+      ]
     },
     {
       "parameters": {
@@ -132,7 +147,10 @@
       "name": "Groq AI Content Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
-      "position": [1100, 400]
+      "position": [
+        1100,
+        400
+      ]
     },
     {
       "parameters": {
@@ -146,7 +164,10 @@
       "name": "Groq Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
-      "position": [1020, 600],
+      "position": [
+        1020,
+        600
+      ],
       "credentials": {
         "groqApi": {
           "id": "groq-credentials",
@@ -178,7 +199,10 @@
       "name": "Set Post Content",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [1320, 400]
+      "position": [
+        1320,
+        400
+      ]
     },
     {
       "parameters": {
@@ -199,7 +223,10 @@
       "name": "Search Unsplash Images",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1540, 400]
+      "position": [
+        1540,
+        400
+      ]
     },
     {
       "parameters": {
@@ -209,7 +236,10 @@
       "name": "Process Image Selection",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1760, 400]
+      "position": [
+        1760,
+        400
+      ]
     },
     {
       "parameters": {
@@ -227,7 +257,10 @@
       "name": "Download Image",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1980, 400]
+      "position": [
+        1980,
+        400
+      ]
     },
     {
       "parameters": {
@@ -265,13 +298,18 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "keepOnlySet": false
+        }
       },
       "id": "prepare-final-data",
       "name": "Prepare Final Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [2200, 400]
+      "position": [
+        2200,
+        400
+      ]
     },
     {
       "parameters": {
@@ -284,7 +322,10 @@
       "name": "Post to LinkedIn",
       "type": "n8n-nodes-base.linkedIn",
       "typeVersion": 1,
-      "position": [2420, 400],
+      "position": [
+        2420,
+        400
+      ],
       "credentials": {
         "linkedInOAuth2Api": {
           "id": "linkedin-oauth2-credentials",
@@ -369,7 +410,10 @@
       "name": "Log to Google Sheets",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [2640, 400],
+      "position": [
+        2640,
+        400
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google-sheets-credentials",
@@ -383,7 +427,10 @@
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
-      "position": [0, 800]
+      "position": [
+        0,
+        800
+      ]
     },
     {
       "parameters": {
@@ -421,20 +468,26 @@
       "name": "Format Error Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [220, 800]
+      "position": [
+        220,
+        800
+      ]
     },
     {
       "parameters": {
         "sendTo": "={{ $env.ALERT_EMAIL }}",
-        "subject": "=🚨 n8n Error: {{ $json.workflowName }}",
-        "message": "=⚠️ Workflow Error Alert\n\n📋 Workflow: {{ $json.workflowName }}\n❌ Failed Node: {{ $json.failedNode }}\n💬 Error Message: {{ $json.errorMessage }}\n🕐 Timestamp: {{ $json.timestamp }}\n\n🔧 Please investigate and resolve the issue.\n\nThis is an automated alert from your n8n workflow.",
+        "subject": "=\ud83d\udea8 n8n Error: {{ $json.workflowName }}",
+        "message": "=\u26a0\ufe0f Workflow Error Alert\n\n\ud83d\udccb Workflow: {{ $json.workflowName }}\n\u274c Failed Node: {{ $json.failedNode }}\n\ud83d\udcac Error Message: {{ $json.errorMessage }}\n\ud83d\udd50 Timestamp: {{ $json.timestamp }}\n\n\ud83d\udd27 Please investigate and resolve the issue.\n\nThis is an automated alert from your n8n workflow.",
         "options": {}
       },
       "id": "send-error-email",
       "name": "Send Error Alert Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
-      "position": [440, 800],
+      "position": [
+        440,
+        800
+      ],
       "credentials": {
         "smtp": {
           "id": "smtp-credentials",
@@ -509,7 +562,10 @@
       "name": "Log Error to Sheets",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [660, 800],
+      "position": [
+        660,
+        800
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "google-sheets-credentials",

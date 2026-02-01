@@ -44,7 +44,9 @@ So I built this workflow to:
 ### 🖼️ Dynamic Visual Content
 - **Unsplash integration** for high-quality, royalty-free images
 - Automatic image selection based on topic relevance
+- **Images included in LinkedIn posts** - text and visuals together
 - Proper photographer attribution (because we respect creators)
+- Binary data preservation through the workflow pipeline
 
 ### 📊 Complete Activity Tracking
 - **Google Sheets logging** of all published posts
@@ -229,6 +231,7 @@ This ensures the workflow never fails due to missing historical data.
 - [Groq API Documentation](https://groq.com/)
 - [Complete Node Functionality Analysis](NODE_ANALYSIS.md) - Detailed analysis of all 18 workflow nodes
 - [Tavily Search Documentation](TAVILY_SEARCH.md) - How Tavily searches for topics with dynamic year handling
+- [LinkedIn Image Posting Fix](IMAGE_POSTING_FIX.md) - How images are included in LinkedIn posts
 
 ---
 

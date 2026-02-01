@@ -762,3 +762,48 @@ All 18 nodes have been verified and are functioning correctly. The workflow is:
 - ✅ Production-ready
 
 The workflow seamlessly handles first-time posting, topic rotation, error recovery, and always produces current, relevant content.
+
+---
+
+## Update: LinkedIn Image Posting Fix
+
+### Issue Discovered
+The workflow was downloading images but not posting them to LinkedIn. Only text was being posted.
+
+### Root Cause
+The "Prepare Final Data" node (Set node) was dropping binary image data because it didn't have `keepOnlySet: false` configured.
+
+### Solution Applied
+Added `keepOnlySet: false` to Prepare Final Data node options:
+```json
+{
+  "parameters": {
+    "assignments": { ... },
+    "options": {
+      "keepOnlySet": false  // ✅ Preserves binary data
+    }
+  }
+}
+```
+
+### How It Works Now
+```
+Download Image
+  ↓ Binary 'data' property + JSON metadata
+  
+Prepare Final Data (keepOnlySet: false)
+  ↓ KEEPS: Binary 'data' property
+  ↓ ADDS: postText, topic, timestamp, imageCredit
+  
+Post to LinkedIn (mediaCategory: IMAGE, binaryPropertyName: data)
+  ↓ Posts: Text + Image ✅
+```
+
+### Verification
+- ✅ Prepare Final Data preserves binary data
+- ✅ Post to LinkedIn has mediaCategory: IMAGE
+- ✅ Post to LinkedIn has binaryPropertyName: data
+- ✅ Complete data flow validated
+
+See [IMAGE_POSTING_FIX.md](IMAGE_POSTING_FIX.md) for detailed analysis.
+
